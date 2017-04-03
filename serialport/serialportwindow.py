@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from serialport import serialportform
-from PyQt4 import QtCore,QtGui
+from PyQt4 import QtCore,QtGui, uic
 import platform
 from __builtin__ import int
 import serialportcontext
@@ -8,11 +8,17 @@ from enaml.widgets.combo_box import ComboBox
 import threading
 import time
 
+qtCreatorFile = "serialport/serialportform.ui"  # Enter file here.
+
+serialportform.Ui_SerialPortWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
+
 class SerialPortWindow(QtGui.QMainWindow,serialportform.Ui_SerialPortWindow):
     _receive_signal = QtCore.pyqtSignal(str)
     _auto_send_signal = QtCore.pyqtSignal()
     def __init__(self):
         super(SerialPortWindow,self).__init__()
+        QtGui.QMainWindow.__init__(self)
+        serialportform.Ui_SerialPortWindow.__init__(self)
         self.setupUi(self)
         self.initForms()
         
@@ -179,9 +185,14 @@ class SerialPortWindow(QtGui.QMainWindow,serialportform.Ui_SerialPortWindow):
         else:
             try:
                 
-                port = self.comboBoxPort.currentIndex()
-                baud = int("%s" % self.comboBoxBaud.currentText(),10)
-                self._serial_context_ = serialportcontext.SerialPortContext(port = port,baud = baud)
+                #port = self.comboBoxPort.currentIndex()
+                selected_port = str(self.comboBoxPort.currentText())
+                print 'caroid-port:'+selected_port + 'check'
+                #baud = int("%s" % self.comboBoxBaud.currentText(),10)
+                selected_baud = int("%s" % self.comboBoxBaud.currentText(),10)
+                print 'caroid-baud:'+ str(selected_baud) + 'check'
+                #self._serial_context_ = serialportcontext.SerialPortContext(port = '/dev/ttyUSB0',baud = 9600)
+                self._serial_context_ = serialportcontext.SerialPortContext(port=selected_port, baud=selected_baud)
                 self._serial_context_.registerReceivedCallback(self.__data_received__)
                 self.checkBoxDTR.setChecked(True)
                 self._serial_context_.setDTR(True)

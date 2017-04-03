@@ -1,5 +1,5 @@
 import serial
-import threading;
+import threading
 import time
 import platform
 import signal

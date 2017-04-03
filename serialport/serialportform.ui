@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>821</width>
-    <height>646</height>
+    <width>1071</width>
+    <height>735</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -58,7 +58,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>14</pointsize>
+       <pointsize>10</pointsize>
       </font>
      </property>
      <property name="text">
@@ -79,7 +79,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>14</pointsize>
+       <pointsize>10</pointsize>
       </font>
      </property>
      <property name="text">
@@ -110,7 +110,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>14</pointsize>
+       <pointsize>10</pointsize>
       </font>
      </property>
      <property name="text">
@@ -141,7 +141,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>14</pointsize>
+       <pointsize>10</pointsize>
       </font>
      </property>
      <property name="text">
@@ -172,7 +172,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>14</pointsize>
+       <pointsize>10</pointsize>
       </font>
      </property>
      <property name="text">
@@ -205,30 +205,6 @@
       <string>打开</string>
      </property>
     </widget>
-   </widget>
-   <widget class="QTextEdit" name="textEditReceived">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>50</y>
-      <width>551</width>
-      <height>271</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>14</pointsize>
-     </font>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
@@ -498,8 +474,8 @@ color:blue;</string>
      <rect>
       <x>260</x>
       <y>330</y>
-      <width>481</width>
-      <height>221</height>
+      <width>321</width>
+      <height>171</height>
      </rect>
     </property>
     <property name="font">
@@ -511,8 +487,8 @@ color:blue;</string>
    <widget class="QPushButton" name="pushButtonSendData">
     <property name="geometry">
      <rect>
-      <x>750</x>
-      <y>330</y>
+      <x>600</x>
+      <y>300</y>
       <width>61</width>
       <height>221</height>
      </rect>
@@ -526,8 +502,8 @@ color:blue;</string>
      <rect>
       <x>260</x>
       <y>20</y>
-      <width>551</width>
-      <height>22</height>
+      <width>771</width>
+      <height>31</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -646,8 +622,8 @@ color:blue;</string>
      <rect>
       <x>260</x>
       <y>570</y>
-      <width>548</width>
-      <height>26</height>
+      <width>401</width>
+      <height>21</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -736,14 +712,76 @@ color:blue;</string>
      </item>
     </layout>
    </widget>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>60</y>
+      <width>411</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QTextEdit" name="textEditReceived">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>381</width>
+       <height>211</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>3</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="readOnly">
+      <bool>false</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextEditorInteraction</set>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>640</y>
+      <width>251</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>GroupBox</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>821</width>
-     <height>21</height>
+     <width>1071</width>
+     <height>30</height>
     </rect>
    </property>
   </widget>
