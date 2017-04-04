@@ -27,6 +27,11 @@ class SerialPortContext(QtCore.QObject,object):
         self._recv_counts_ = 0
         self._sent_counts_ = 0
         self._serial_port_ = None
+        self._received_thread_ = threading.Thread(target=self.__recv_func__, args=(self,))
+        self._RXD_ = None
+        self._CD_ = None
+        self._DTR_ = None
+        self._RTS_ = None
         
         
     def getAllCounts(self):
@@ -93,7 +98,7 @@ class SerialPortContext(QtCore.QObject,object):
         self._serial_port_ = serial.Serial(self._port_,int(self._baud_))
         self._serial_port_.setRTS(self._RTS_)
         self._serial_port_.setDTR(self._DTR_)
-        self._received_thread_ = threading.Thread(target = self.__recv_func__,args=(self,))
+        #self._received_thread_ = threading.Thread(target = self.__recv_func__,args=(self,))
         self._is_running_ = True
         self._received_thread_.setDaemon(True)
         self._received_thread_.setName("SerialPortRecvThread")
