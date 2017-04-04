@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from serialport import serialportform
 from PyQt4 import QtCore,QtGui, uic
+from PyQt4.QtGui import QTextCursor
 import platform
 from __builtin__ import int
 import serialportcontext
@@ -24,7 +25,7 @@ class SerialPortWindow(QtGui.QMainWindow,serialportform.Ui_SerialPortWindow):
         
     def initForms(self):
         #init serial ports
-        self.setFixedSize(QtCore.QSize(821, 646))
+        #self.setFixedSize(QtCore.QSize(821, 646))
         
         if platform.system() == "Windows":
             ports = QtCore.QStringList()
@@ -36,10 +37,10 @@ class SerialPortWindow(QtGui.QMainWindow,serialportform.Ui_SerialPortWindow):
             self.__scanSerialPorts__()
         
         #init bauds
-        bauds = ["50","75","134","110","150","200","300","600","1200","2400","4800","9600","14400","19200","38400","56000","57600",
-                 "115200"];
+        bauds = ["300", "600", "1200", "1800", "2400", "4800", "9600", "19200", "38400", "57600", "115200", "230400", "460800", "500000", "576000", "921600", "1000000", "1152000", "1500000", "2000000", "2500000", "3000000", "3500000", "4000000"];
         self.comboBoxBaud.addItems(bauds)
-        self.comboBoxBaud.setCurrentIndex(len(bauds) - 1)
+        #self.comboBoxBaud.setCurrentIndex(len(bauds) - 1)
+        self.comboBoxBaud.setCurrentIndex(6)
         
         checks = ["None","Odd","Even","Zero","One"]
         self.comboBoxCheckSum.addItems(checks)
@@ -177,6 +178,7 @@ class SerialPortWindow(QtGui.QMainWindow,serialportform.Ui_SerialPortWindow):
         for i in range(32):
             ports.append("/dev/ttyUSB%d" % i)
         self.comboBoxPort.addItems(ports)
+        self.comboBoxPort.setCurrentIndex(32)
         
     def __open_serial_port__(self):
         if  self._serial_context_.isRunning():
@@ -220,6 +222,7 @@ class SerialPortWindow(QtGui.QMainWindow,serialportform.Ui_SerialPortWindow):
         else:
             for l in xrange(len(data)):
                 self.textEditReceived.insertPlainText(data[l])
+                self.textEditReceived.moveCursor(QTextCursor.End)
                 
         if self.checkBoxNewLine.isChecked():
             self.textEditReceived.insertPlainText("\n")
