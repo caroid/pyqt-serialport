@@ -19,15 +19,15 @@ class SerialPortContext(QtCore.QObject,object):
                 self._port_ = "/dev/ttyUSB0"
                 
         self._baud_ = baud
-        if self._baud_ <= 50 or self._baud_ > 115200:
-            self._baud_ = 115200
+        if self._baud_ <= 50 or self._baud_ > 4000000:
+            self._baud_ = 4000000
        
         self._is_running_ = False
         self._all_counts_ = 0
         self._recv_counts_ = 0
         self._sent_counts_ = 0
         self._serial_port_ = None
-        self._received_thread_ = threading.Thread(target=self.__recv_func__, args=(self,))
+        #self._received_thread_ = threading.Thread(target=self.__recv_func__, args=(self,))
         self._RXD_ = None
         self._CD_ = None
         self._DTR_ = None
@@ -84,6 +84,7 @@ class SerialPortContext(QtCore.QObject,object):
 #         print("start serial port")
         while context.isRunning():
             line = context._serial_port_.read()
+            # With No timeout set. ser.read() is blocking until the number of bytes is read.
             context._recvSignal_.emit(line)
             buf_len = len(line)
             self._recv_counts_ += buf_len
@@ -98,17 +99,20 @@ class SerialPortContext(QtCore.QObject,object):
         self._serial_port_ = serial.Serial(self._port_,int(self._baud_))
         self._serial_port_.setRTS(self._RTS_)
         self._serial_port_.setDTR(self._DTR_)
-        #self._received_thread_ = threading.Thread(target = self.__recv_func__,args=(self,))
+        self._received_thread_ = threading.Thread(target = self.__recv_func__,args=(self,))
         self._is_running_ = True
         self._received_thread_.setDaemon(True)
         self._received_thread_.setName("SerialPortRecvThread")
         self._received_thread_.start()
+        for item in threading.enumerate():
+            print item
         
          
     def close(self):
         print("serial context is running: %s" % self.isRunning())
         self._is_running_ = False
         self._serial_port_.close()
+        # when closebutton pused, threading is running now, should be deleted.
             
     def send(self,data,isHex):
         if not self.isRunning():
