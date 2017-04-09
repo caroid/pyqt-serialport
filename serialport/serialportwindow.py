@@ -6,6 +6,7 @@ from PyQt4.QtGui import QTextCursor
 import platform
 from __builtin__ import int
 import serialportcontext
+import serialportedittext
 from enaml.widgets.combo_box import ComboBox
 import threading
 import time
@@ -15,6 +16,7 @@ qtCreatorFile = "serialport/serialportform.ui"  # Enter file here.
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
     _receive_signal = QtCore.pyqtSignal(str)
+    _receive_keyboard_signal = QtCore.pyqtSignal(str)
     _auto_send_signal = QtCore.pyqtSignal()
     def __init__(self):
         super(SerialPortWindow,self).__init__()
@@ -62,6 +64,8 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         baud = int("%s" % self.comboBoxBaud.currentText(),10)
         self._serial_context_ = serialportcontext.SerialPortContext(port = port,baud = baud)
         
+        self._serial_edittext_ = serialportedittext.SerialPortInput()
+                
         self.checkBoxCD.setEnabled(False)
         self.checkBoxCTS.setEnabled(False)
         self.checkBoxDSR.setEnabled(False)
@@ -78,6 +82,7 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         
         self.pushButtonOpenSerial.clicked.connect(self.__open_serial_port__)
         self._receive_signal.connect(self.__display_recv_data__)
+        self._receive_keyboard_signal.connect(self.__display_recv_keyboard_data__)
         self.pushButtonClearRecvArea.clicked.connect(self.__clear_recv_area__)
         self.pushButtonSendData.clicked.connect(self.__send_data__)
         self.checkBoxSendHex.clicked.connect(self.__set_send_hex__)
@@ -187,7 +192,7 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
             self.pushButtonOpenSerial.setText(u'打开')
         else:
             try:
-                
+                #
                 #port = self.comboBoxPort.currentIndex()
                 selected_port = str(self.comboBoxPort.currentText())
                 print 'caroid-port: '+selected_port + ' check'
@@ -197,6 +202,7 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
                 #self._serial_context_ = serialportcontext.SerialPortContext(port = '/dev/ttyUSB0',baud = 9600)
                 self._serial_context_ = serialportcontext.SerialPortContext(port=selected_port, baud=selected_baud)
                 self._serial_context_.registerReceivedCallback(self.__data_received__)
+                self._serial_context_.registerkeyboardReceivedCallback(self.__data_keyboard_received__)
                 self.checkBoxDTR.setChecked(True)
                 self._serial_context_.setDTR(True)
                 self.checkBoxRTS.setChecked(True)
@@ -211,10 +217,19 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         self._receive_signal.emit(data)
         if self._recv_file_ != None and self.checkBoxSaveAsFile.isChecked():
             self._recv_file_.write(data)
+
+    def __data_keyboard_received__(self,data):
+        #print('recv:%s' % data)
+        self._receive_keyboard_signal.emit(data)
         
+            
     def __set_display_hex__(self):
         self.textEditReceived.clear()
         
+    def __display_recv_keyboard_data__(self,data):
+        #self._serial_context_.write(data)
+        self._serial_context_.send_keyboard(data)
+    
     def __display_recv_data__(self,data):
         if self.checkBoxDisplayHex.isChecked():
             for l in xrange(len(data)):
@@ -242,6 +257,7 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         
     def __send_data__(self):
         data = str(self.textEditSent.toPlainText())
+        
         if self._serial_context_.isRunning():
             if len(data) > 0:
                 self._serial_context_.send(data, self.checkBoxSendHex.isChecked())

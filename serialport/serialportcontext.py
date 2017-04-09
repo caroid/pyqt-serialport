@@ -6,8 +6,11 @@ import signal
 from PyQt4 import QtCore
 import binascii
 
+from pykeyboard import PyKeyboard
+
 class SerialPortContext(QtCore.QObject,object):
     _recvSignal_ = QtCore.pyqtSignal(str,name="recvsignal")
+    _recvkeyboardSignal_ = QtCore.pyqtSignal(str,name="recvkeyboardsignal")
     
     def __init__(self,port = None,baud = 115200,bits = 8,stop_bits = 1,check=None):
         super(SerialPortContext,self).__init__()
@@ -81,20 +84,36 @@ class SerialPortContext(QtCore.QObject,object):
             self._serial_port_.setRTS(value)
         
     def __recv_func__(self,context):
-#         print("start serial port")
+        print("start serial port + ") + str(type(context))
         while context.isRunning():
             line = context._serial_port_.read()
             # With No timeout set. ser.read() is blocking until the number of bytes is read.
             context._recvSignal_.emit(line)
+            #print line
             buf_len = len(line)
             self._recv_counts_ += buf_len
             self._all_counts_ += self._recv_counts_ + self._recv_counts_
             
         print("close serial port")
-     
+
+    def __recv_keyboard_func__(self,context):
+#         print("start serial port")
+        while context.isRunning():
+            line_keyboard = raw_input()
+            print line_keyboard
+            # With No timeout set. ser.read() is blocking until the number of bytes is read.
+            context._recvkeyboardSignal_.emit(line_keyboard)
+            
+        print("close serial port")
+        
     def registerReceivedCallback(self,callback):
         self._recvSignal_.connect(callback)
-           
+        #print callback
+
+    def registerkeyboardReceivedCallback(self,callback):
+        self._recvkeyboardSignal_.connect(callback)
+        #print callback
+        
     def open(self):
         self._serial_port_ = serial.Serial(self._port_,int(self._baud_))
         self._serial_port_.setRTS(self._RTS_)
@@ -104,6 +123,11 @@ class SerialPortContext(QtCore.QObject,object):
         self._received_thread_.setDaemon(True)
         self._received_thread_.setName("SerialPortRecvThread")
         self._received_thread_.start()
+        
+        self._received_keyboard_thread = threading.Thread(target = self.__recv_keyboard_func__,args=(self,))
+        #self._received_keyboard_thread.setDaemon(True)
+        self._received_keyboard_thread.setName("SerialPortRecvkeyboardThread")
+        self._received_keyboard_thread.start()
         for item in threading.enumerate():
             print item
         
@@ -136,6 +160,10 @@ class SerialPortContext(QtCore.QObject,object):
             self._serial_port_.write(buffer.decode("hex"))
         
         
+    def send_keyboard(self,str):
+        self._serial_port_.write(str + '\n')
+    
+
     def isRunning(self):
         return self._is_running_ and self._serial_port_.isOpen()
          
