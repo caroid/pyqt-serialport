@@ -5,6 +5,7 @@ class SerialPortInput(QtGui.QTextEdit):
         super(SerialPortInput,self).__init__(parent)
         self._is_hex = False
         self.installEventFilter(self)
+        self.setFocusPolicy(QtCore.Qt.NoFocus)
         
     def keyPressEvent(self, qKeyEvent):
         print (qKeyEvent.key()) 

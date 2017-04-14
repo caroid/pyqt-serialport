@@ -5,6 +5,7 @@ import sys
 
 def main():
     app = QtGui.QApplication(sys.argv)
+    #app.setStyle("fusion")
     win = serialport.serialportwindow.SerialPortWindow()
     win.show()
     sys.exit(app.exec_())

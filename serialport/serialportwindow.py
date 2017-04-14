@@ -7,6 +7,7 @@ import platform
 from __builtin__ import int
 import serialportcontext
 import serialportedittext
+import switcher
 from enaml.widgets.combo_box import ComboBox
 import threading
 import time
@@ -65,6 +66,7 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         self._serial_context_ = serialportcontext.SerialPortContext(port = port,baud = baud)
         
         self._serial_edittext_ = serialportedittext.SerialPortInput()
+        self._serial_edittext_.setFocusPolicy(QtCore.Qt.NoFocus)
                 
         self.checkBoxCD.setEnabled(False)
         self.checkBoxCTS.setEnabled(False)
@@ -244,6 +246,8 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
             self.textEditReceived.insertPlainText("\n")
                     
         self.lineEditReceivedCounts.setText("%d" % self._serial_context_.getRecvCounts())
+
+
         
     def __clear_recv_area__(self):
         self.textEditReceived.clear()
@@ -299,3 +303,27 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
                 
         if self.checkBoxEmptyAfterSent.isChecked():
             self.textEditSent.clear()
+
+    def keyReleaseEvent(self, QKeyEvent):
+        if QKeyEvent.key()==QtCore.Qt.Key_Control:
+            self.textEditReceived.ctrlPressed=False
+            print("The ctrl key is released up")
+        return super(SerialPortWindow,self).keyReleaseEvent(QKeyEvent)
+    def keyPressEvent(self, QKeyEvent):
+        if QKeyEvent.key()==QtCore.Qt.Key_Control:
+            self.textEditReceived.ctrlPressed=True
+            print("The ctrl key is holding down")
+        if QKeyEvent.key()==QtCore.Qt.Key_Return:
+            cmds = '\n'
+        else :
+            cmds = switcher.key_to_char(QKeyEvent.key())
+        self.textEditReceived.insertPlainText(cmds)
+        #self.textEditSent.insertPlainText(switcher.key_to_char(QKeyEvent.key()))
+        self.textEditReceived.moveCursor(QTextCursor.End)
+        #self.textEditSent.moveCursor(QTextCursor.End)
+        self._serial_context_.send(cmds, self.checkBoxSendHex.isChecked())
+        
+        return super(SerialPortWindow,self).keyPressEvent(QKeyEvent)
+
+        
+            
