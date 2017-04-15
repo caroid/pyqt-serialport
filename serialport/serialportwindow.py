@@ -292,13 +292,14 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
     def __im_send_data__(self):
         data = str(self.textEditSent.toPlainText())
         print data
-        if self._serial_context_.isRunning():
-            if len(data) > 0:
-                self._serial_context_.send(data, self.checkBoxSendHex.isChecked())
-                self.lineEditSentCounts.setText("%d" % self._serial_context_.getSendCounts())
-                self.textEditSent.clear()
-                delay = self.spinBox.value() * 10.0 / 1000.0 #100.0 / 1000.0
-                time.sleep(delay)
+        if data[len(data)-1] == '\b'or data[len(data)-1] == '\t'or data[len(data)-1] == '\n':
+            if self._serial_context_.isRunning():
+                if len(data) > 0:
+                    self._serial_context_.send(data, self.checkBoxSendHex.isChecked())
+                    self.lineEditSentCounts.setText("%d" % self._serial_context_.getSendCounts())
+                    self.textEditSent.clear()
+                
+                
                     
     def __auto_send__(self,delay):
         while self._is_auto_sending:
@@ -385,5 +386,27 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         
         return super(SerialPortWindow,self).keyPressEvent(QKeyEvent)
     """
+    def keyPressEvent(self, QKeyEvent):
+        if QKeyEvent.key()==QtCore.Qt.Key_Control:
+            self.textEditReceived.ctrlPressed=True
+            print("The ctrl key is holding down")
+        if QKeyEvent.key()==QtCore.Qt.Key_Question:
+            cmds = str(unichr(0x3F))
+        if QKeyEvent.key()==QtCore.Qt.Key_Escape:
+            cmds = '\e'
+        if QKeyEvent.key()==QtCore.Qt.Key_Tab:
+            cmds = '\t'
+        if QKeyEvent.key()== 0x20 :#QtCore.Qt.Key_Backspace:
+            cmds = str(unichr(0x20)) # '\b'
+        if QKeyEvent.key()==QtCore.Qt.Key_Return:
+            cmds = '\n'
+        else :
+            cmds = switcher.key_to_char(QKeyEvent.key())
+        self.textEditReceived.insertPlainText(cmds)
+        #self.textEditSent.insertPlainText(switcher.key_to_char(QKeyEvent.key()))
+        self.textEditReceived.moveCursor(QTextCursor.End)
+        #self.textEditSent.moveCursor(QTextCursor.End)
+        self._serial_context_.send(cmds, self.checkBoxSendHex.isChecked())
         
+        return super(SerialPortWindow,self).keyPressEvent(QKeyEvent)        
             
