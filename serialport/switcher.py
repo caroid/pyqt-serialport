@@ -6,10 +6,10 @@ import os,sys
 
 def key_to_char(argument):
     switcher = {
-    QtCore.Qt.Key_Escape                         : 0x01000000   ,
-    QtCore.Qt.Key_Tab                            : 0x01000001   ,
+    QtCore.Qt.Key_Escape                         : 0x1b , # 0x01000000   , # "\e"
+    QtCore.Qt.Key_Tab                            : 0x9 , #0x01000001   , # "\t"
     QtCore.Qt.Key_Backtab                        : 0x01000002   ,
-    QtCore.Qt.Key_Backspace                      : 0x01000003   ,
+    QtCore.Qt.Key_Backspace                      : 0x8 , #0x01000003   , # "\b"
     QtCore.Qt.Key_Return                         : 0x01000004   ,
     QtCore.Qt.Key_Enter                          : 0x01000005   ,
     QtCore.Qt.Key_Insert                         : 0x01000006   ,

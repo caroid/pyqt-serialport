@@ -3,6 +3,8 @@
 #from serialport import *
 from PyQt4 import QtCore,QtGui, uic
 from PyQt4.QtGui import QTextCursor
+from PyQt4.QtCore import pyqtSlot,SIGNAL,SLOT
+import sys
 import platform
 from __builtin__ import int
 import serialportcontext
@@ -66,7 +68,8 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         self._serial_context_ = serialportcontext.SerialPortContext(port = port,baud = baud)
         
         self._serial_edittext_ = serialportedittext.SerialPortInput()
-        self._serial_edittext_.setFocusPolicy(QtCore.Qt.NoFocus)
+        self._serial_edittext_.__init__(self)
+        #self._serial_edittext_.keyPressEvent(self,e)
                 
         self.checkBoxCD.setEnabled(False)
         self.checkBoxCTS.setEnabled(False)
@@ -104,6 +107,13 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         self._recv_file_ = None
         self._send_file_ = None
         self._send_file_data = ''
+
+        #self.textEditSent.connect(self.textEditSent,SIGNAL("textChanged()"),self.textEditSent,SLOT("__im_send_data__()"))
+        self.textEditSent.textChanged.connect(self.__im_send_data__)
+        #self._send_thread = threading.Thread(target=self.__im_send_data__,args=(self,))
+        #self._is_auto_sending = True
+        #self._send_thread.setDaemon(True)
+        #self._send_thread.start()
         
     def __open_send_file__(self):
         filename = QtGui.QFileDialog.getOpenFileName(self, caption=QtCore.QString("Open Send File"))
@@ -213,7 +223,7 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
                 self.pushButtonOpenSerial.setText(u'关闭')
             except Exception,e:
                 QtGui.QMessageBox.critical(self,u"打开端口",u"打开端口失败,请检查!")
-        
+            
     def __data_received__(self,data):
         #print('recv:%s' % data)
         self._receive_signal.emit(data)
@@ -277,7 +287,49 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
                     self._is_auto_sending = True
                     self._auto_send_thread.setDaemon(True)
                     self._auto_send_thread.start()
+    
+    @pyqtSlot()
+    def __im_send_data__(self):
+        data = str(self.textEditSent.toPlainText())
+        print data
+        if self._serial_context_.isRunning():
+            if len(data) > 0:
+                self._serial_context_.send(data, self.checkBoxSendHex.isChecked())
+                self.lineEditSentCounts.setText("%d" % self._serial_context_.getSendCounts())
+                self.textEditSent.clear()
+                delay = self.spinBox.value() * 10.0 / 1000.0 #100.0 / 1000.0
+                time.sleep(delay)
                     
+    def __auto_send__(self,delay):
+        while self._is_auto_sending:
+            if self.checkBoxSendFile.isChecked():
+                if len(self._send_file_data) > 0:
+                    self._serial_context_.send(self._send_file_data, self.checkBoxSendHex.isChecked())
+                    self._auto_send_signal.emit()
+                    break
+            else:
+                data = str(self.textEditSent.toPlainText())
+                if self._serial_context_.isRunning():
+                    if len(data) > 0:
+                        self._serial_context_.send(data, self.checkBoxSendHex.isChecked())
+                        #self.textEditSent.clear()
+                        self._auto_send_signal.emit()
+                        
+            time.sleep(delay)
+            
+    def __auto_send_update__(self):
+        self.lineEditSentCounts.setText("%d" % self._serial_context_.getSendCounts())
+       
+        if self.checkBoxSendFile.isChecked():
+            if len(self._send_file_data) > 0:
+                self.textEditSent.setText(self._send_file_data)
+                
+        if self.checkBoxEmptyAfterSent.isChecked():
+            self.textEditSent.clear()
+
+            
+
+    """                
     def __auto_send__(self,delay):
         while self._is_auto_sending:
             if self.checkBoxSendFile.isChecked():
@@ -303,7 +355,7 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
                 
         if self.checkBoxEmptyAfterSent.isChecked():
             self.textEditSent.clear()
-
+    
     def keyReleaseEvent(self, QKeyEvent):
         if QKeyEvent.key()==QtCore.Qt.Key_Control:
             self.textEditReceived.ctrlPressed=False
@@ -313,6 +365,14 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         if QKeyEvent.key()==QtCore.Qt.Key_Control:
             self.textEditReceived.ctrlPressed=True
             print("The ctrl key is holding down")
+        if QKeyEvent.key()==QtCore.Qt.Key_Question:
+            cmds = str(unichr(0x3F))
+        if QKeyEvent.key()==QtCore.Qt.Key_Escape:
+            cmds = '\e'
+        if QKeyEvent.key()==QtCore.Qt.Key_Tab:
+            cmds = '\t'
+        if QKeyEvent.key()== 0x20 :#QtCore.Qt.Key_Backspace:
+            cmds = str(unichr(0x20)) # '\b'
         if QKeyEvent.key()==QtCore.Qt.Key_Return:
             cmds = '\n'
         else :
@@ -324,6 +384,6 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         self._serial_context_.send(cmds, self.checkBoxSendHex.isChecked())
         
         return super(SerialPortWindow,self).keyPressEvent(QKeyEvent)
-
+    """
         
             
