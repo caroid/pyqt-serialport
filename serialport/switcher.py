@@ -425,4 +425,5 @@ def key_to_char(argument):
     QtCore.Qt.Key_Zoom                           : 0x01020006   ,
     QtCore.Qt.Key_Cancel                         : 0x01020001   ,
     }
+    #return str(unichr(switcher.get(argument, "nothing")))
     return str(unichr(switcher.get(argument, "nothing")))

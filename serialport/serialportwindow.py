@@ -4,7 +4,7 @@
 from PyQt4 import QtCore,QtGui, uic
 from PyQt4.QtGui import QTextCursor
 from PyQt4.QtCore import pyqtSlot,SIGNAL,SLOT
-import sys
+import sys,os
 import platform
 from __builtin__ import int
 import serialportcontext
@@ -105,6 +105,8 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         
         self._is_auto_sending = False
         self._recv_file_ = None
+        self._recv_key_value_ = None
+        print 'caroid1'+ str(type(self._recv_file_))
         self._send_file_ = None
         self._send_file_data = ''
 
@@ -138,16 +140,23 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
             QtGui.QMessageBox.critical(self,u"打开文件",u"无法打开文件,请检查!")
             
     def __save_recv_file__(self):
-        filename = QtGui.QFileDialog.getSaveFileName(self, caption=QtCore.QString("Save Received File"))
+        #filename = QtGui.QFileDialog.getSaveFileName(self, caption=QtCore.QString("Save Received File"))
+        dirname = '/home/user/0_CIG/0_project/0_maintenance/uart_print/'
+        time_of_created = time.strftime('%Y-%m-%d_%H-%M-%S',time.localtime(time.time())) 
+        filename = dirname + time_of_created + '.txt'
+        print 'caroid2'+ str(type(self._recv_file_))
         try:
             if self._recv_file_ != None:
                 self._recv_file_.flush()
                 self._recv_file_.close()
+                print 'caroid3'+ str(type(self._recv_file_))
             if filename and self.checkBoxSaveAsFile.isChecked():
                 self._recv_file_ = open(filename,"a+")
+                print 'caroid4'+ str(type(self._recv_file_))
                 data = str(self.textEditReceived.toPlainText())
                 if len(data) > 0:
                     self._recv_file_.write(data)
+                    print 'caroid5'+ str(type(self._recv_file_))
                 
         except Exception,e:
             QtGui.QMessageBox.critical(self,u"保存文件",u"无法保存文件,请检查!")
@@ -229,6 +238,8 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         self._receive_signal.emit(data)
         if self._recv_file_ != None and self.checkBoxSaveAsFile.isChecked():
             self._recv_file_.write(data)
+            print 'caroid6'+ str(type(self._recv_file_))
+            
 
     def __data_keyboard_received__(self,data):
         #print('recv:%s' % data)
@@ -241,6 +252,8 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
     def __display_recv_keyboard_data__(self,data):
         #self._serial_context_.write(data)
         self._serial_context_.send_keyboard(data)
+        
+        
     
     def __display_recv_data__(self,data):
         if self.checkBoxDisplayHex.isChecked():
@@ -291,7 +304,10 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
     @pyqtSlot()
     def __im_send_data__(self):
         data = str(self.textEditSent.toPlainText())
-        print data
+        if len(data) == 0:
+            print 'have no commands  to emit.'
+            return
+        print data,len(data),data[len(data)-1]
         if data[len(data)-1] == '\b'or data[len(data)-1] == '\t'or data[len(data)-1] == '\n':
             if self._serial_context_.isRunning():
                 if len(data) > 0:
@@ -390,6 +406,9 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         if QKeyEvent.key()==QtCore.Qt.Key_Control:
             self.textEditReceived.ctrlPressed=True
             print("The ctrl key is holding down")
+        if QKeyEvent.key()==QtCore.Qt.Key_Up:
+            self.textEditReceived.ctrlPressed=True
+            print("The Key_Up key is holding down")
         if QKeyEvent.key()==QtCore.Qt.Key_Question:
             cmds = str(unichr(0x3F))
         if QKeyEvent.key()==QtCore.Qt.Key_Escape:
