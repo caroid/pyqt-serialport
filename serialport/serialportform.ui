@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Integrated Toolkits --- CIG</string>
+   <string>CIG(JDM)---Tool Sets --- gengzhihong@cambridgeig.com ---</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_4">

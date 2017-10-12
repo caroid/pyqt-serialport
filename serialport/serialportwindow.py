@@ -230,11 +230,13 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
                 self._serial_context_.setRTS(True)
                 self._serial_context_.open()
                 self.pushButtonOpenSerial.setText(u'关闭')
+
+                #self._serial_context_.getRecIsHex(self.checkBoxSendHex.isChecked()) #self.checkBoxDisplayHex.isChecked())
             except Exception,e:
                 QtGui.QMessageBox.critical(self,u"打开端口",u"打开端口失败,请检查!")
             
     def __data_received__(self,data):
-        #print('recv:%s' % data)
+        #print("In buffer:%s", data)
         self._receive_signal.emit(data)
         if self._recv_file_ != None and self.checkBoxSaveAsFile.isChecked():
             self._recv_file_.write(data)
@@ -257,9 +259,12 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
     
     def __display_recv_data__(self,data):
         if self.checkBoxDisplayHex.isChecked():
-            for l in xrange(len(data)):
-                hexstr = "%02X " % ord(str(data[l]))
-                self.textEditReceived.insertPlainText(hexstr)
+            self.textEditReceived.insertPlainText(data)
+            self.textEditReceived.insertPlainText(' ')
+            #for l in xrange(len(data)):
+            #    hexstr = "%02X " % ord(str(data[l]))
+                #hexstr = hex(ord(data[l]))
+            #    self.textEditReceived.insertPlainText(hexstr)
         else:
             for l in xrange(len(data)):
                 self.textEditReceived.insertPlainText(data[l])
@@ -287,7 +292,7 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         
         if self._serial_context_.isRunning():
             if len(data) > 0:
-                self._serial_context_.send(data, self.checkBoxSendHex.isChecked())
+                self._serial_context_.send(data, self.checkBoxSendHex.isChecked(), self.checkBoxDisplayHex.isChecked())
                 self.lineEditSentCounts.setText("%d" % self._serial_context_.getSendCounts())
                 if self.checkBoxEmptyAfterSent.isChecked():
                     self.textEditSent.clear()

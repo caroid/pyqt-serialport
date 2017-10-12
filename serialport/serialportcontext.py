@@ -35,8 +35,14 @@ class SerialPortContext(QtCore.QObject,object):
         self._CD_ = None
         self._DTR_ = None
         self._RTS_ = None
+
+        self.RecIsHex = 0
+        #self.getRecIsHex(self,isHex)
         
-        
+    #def getRecIsHex(self,isHex):
+    #    self.RecIsHex = isHex
+
+
     def getAllCounts(self):
         return self._all_counts_
     
@@ -85,12 +91,20 @@ class SerialPortContext(QtCore.QObject,object):
         
     def __recv_func__(self,context):
         print("start serial port + ") + str(type(context))
+        #self.getRecIsHex(self, isHex)
+        print 'self.RecIsHex = ',self.RecIsHex
         while context.isRunning():
             line = context._serial_port_.read()
+            hex_list = [hex(ord(i)) for i in line]
             # With No timeout set. ser.read() is blocking until the number of bytes is read.
-            context._recvSignal_.emit(line)
-            #print line
+            if not self.RecIsHex:
+                context._recvSignal_.emit(line)
+            else:
+                context._recvSignal_.emit(hex_list[0])
+            #hex_list = [hex(ord(i)) for i in line]
+            print "In buffer:",hex_list
             buf_len = len(line)
+            print "buf_len:",buf_len
             self._recv_counts_ += buf_len
             self._all_counts_ += self._recv_counts_ + self._recv_counts_
             
@@ -138,9 +152,10 @@ class SerialPortContext(QtCore.QObject,object):
         self._serial_port_.close()
         # when closebutton pused, threading is running now, should be deleted.
             
-    def send(self,data,isHex):
+    def send(self,data,isHex,RecIsHex):
         if not self.isRunning():
             return
+        self.RecIsHex = RecIsHex
         if not isHex:
             buff = data.encode("utf-8")
             self._serial_port_.write(buff)
@@ -153,7 +168,7 @@ class SerialPortContext(QtCore.QObject,object):
             buffer = ''
             for d in hex_datas:
                 buffer += d
-#             print(buffer.decode('hex'))
+            print(buffer.decode('hex'))
             buf_len = len(buffer)
             self._sent_counts_ += buf_len
             self._all_counts_ += self._recv_counts_ + self._recv_counts_
