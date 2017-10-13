@@ -104,7 +104,7 @@ class SerialPortContext(QtCore.QObject,object):
             #hex_list = [hex(ord(i)) for i in line]
             print "In buffer:",hex_list
             buf_len = len(line)
-            print "buf_len:",buf_len
+            #print "buf_len:",buf_len
             self._recv_counts_ += buf_len
             self._all_counts_ += self._recv_counts_ + self._recv_counts_
             

@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>CIG(JDM)---Tool Sets --- gengzhihong@cambridgeig.com ---</string>
   </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0" rowspan="2">
@@ -544,25 +547,6 @@ color:blue;</string>
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1123</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuFunctions">
-    <property name="title">
-     <string>Functions</string>
-    </property>
-    <addaction name="actionUART_GUI"/>
-    <addaction name="actionLog_Analysis"/>
-   </widget>
-   <addaction name="menuFunctions"/>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
@@ -573,24 +557,87 @@ color:blue;</string>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="separator"/>
   </widget>
-  <action name="actionUART_GUI">
-   <property name="checkable">
-    <bool>true</bool>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1123</width>
+     <height>23</height>
+    </rect>
    </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
+   <widget class="QMenu" name="menuFuncs">
+    <property name="geometry">
+     <rect>
+      <x>396</x>
+      <y>106</y>
+      <width>171</width>
+      <height>108</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Funcs</string>
+    </property>
+    <addaction name="actionUart_Tx_Rx"/>
+    <addaction name="actionSave_to"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuConfig">
+    <property name="title">
+     <string>Config</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuDatabase">
+    <property name="title">
+     <string>MongoDB</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuROS">
+    <property name="title">
+     <string>ROS</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuFPGA_DSP">
+    <property name="title">
+     <string>FPGA/DSP</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuOpenALPR">
+    <property name="title">
+     <string>OpenALPR</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuTensorFlow">
+    <property name="title">
+     <string>TensorFlow</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuPattern_recognition">
+    <property name="title">
+     <string>PatternRecognition</string>
+    </property>
+   </widget>
+   <addaction name="menuFuncs"/>
+   <addaction name="menuConfig"/>
+   <addaction name="menuDatabase"/>
+   <addaction name="menuROS"/>
+   <addaction name="menuFPGA_DSP"/>
+   <addaction name="menuOpenALPR"/>
+   <addaction name="menuTensorFlow"/>
+   <addaction name="menuPattern_recognition"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionUart_Tx_Rx">
    <property name="text">
-    <string>UART GUI</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
+    <string>Uart Tx/Rx</string>
    </property>
   </action>
-  <action name="actionLog_Analysis">
+  <action name="actionSave_to">
    <property name="text">
-    <string>Log Analysis</string>
+    <string>Save to ...</string>
    </property>
   </action>
  </widget>

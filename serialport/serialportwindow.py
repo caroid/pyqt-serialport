@@ -261,10 +261,7 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         if self.checkBoxDisplayHex.isChecked():
             self.textEditReceived.insertPlainText(data)
             self.textEditReceived.insertPlainText(' ')
-            #for l in xrange(len(data)):
-            #    hexstr = "%02X " % ord(str(data[l]))
-                #hexstr = hex(ord(data[l]))
-            #    self.textEditReceived.insertPlainText(hexstr)
+            self.textEditReceived.moveCursor(QTextCursor.End)
         else:
             for l in xrange(len(data)):
                 self.textEditReceived.insertPlainText(data[l])
@@ -316,7 +313,7 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         if data[len(data)-1] == '\b'or data[len(data)-1] == '\t'or data[len(data)-1] == '\n':
             if self._serial_context_.isRunning():
                 if len(data) > 0:
-                    self._serial_context_.send(data, self.checkBoxSendHex.isChecked())
+                    self._serial_context_.send(data, self.checkBoxSendHex.isChecked(), self.checkBoxDisplayHex.isChecked())
                     self.lineEditSentCounts.setText("%d" % self._serial_context_.getSendCounts())
                     self.textEditSent.clear()
                 
@@ -326,14 +323,14 @@ class SerialPortWindow(QtGui.QMainWindow,Ui_MainWindow):
         while self._is_auto_sending:
             if self.checkBoxSendFile.isChecked():
                 if len(self._send_file_data) > 0:
-                    self._serial_context_.send(self._send_file_data, self.checkBoxSendHex.isChecked())
+                    self._serial_context_.send(self._send_file_data, self.checkBoxSendHex.isChecked(), self.checkBoxDisplayHex.isChecked())
                     self._auto_send_signal.emit()
                     break
             else:
                 data = str(self.textEditSent.toPlainText())
                 if self._serial_context_.isRunning():
                     if len(data) > 0:
-                        self._serial_context_.send(data, self.checkBoxSendHex.isChecked())
+                        self._serial_context_.send(data, self.checkBoxSendHex.isChecked(), self.checkBoxDisplayHex.isChecked())
                         #self.textEditSent.clear()
                         self._auto_send_signal.emit()
                         
